@@ -1,0 +1,763 @@
+// C++ program for implementation of FCFS 
+// scheduling 
+#include<bits/stdc++.h> 
+using namespace std; 
+
+struct Process 
+{ 
+	int pid; // Process ID 
+	int bt; // CPU Burst time required 
+	int priority; // Priority of this process 
+}; 
+
+// Function to sort the Process acc. to priority 
+bool comparison(Process a, Process b) 
+{ 
+	return (a.priority > b.priority); 
+} 
+
+// Function to find the waiting time for all 
+// processes 
+void findWaitingTime(Process proc[], int n, 
+					int wt[]) 
+{ 
+	// waiting time for first process is 0 
+	wt[0] = 0; 
+
+	// calculating waiting time 
+	for (int i = 1; i < n ; i++ ) 
+		wt[i] = proc[i-1].bt + wt[i-1] ; 
+} 
+
+// Function to calculate turn around time 
+void findTurnAroundTime( Process proc[], int n, 
+						int wt[], int tat[]) 
+{ 
+	// calculating turnaround time by adding 
+	// bt[i] + wt[i] 
+	for (int i = 0; i < n ; i++) 
+		tat[i] = proc[i].bt + wt[i]; 
+} 
+// Insertion in Threaded Binary Search Tree. 
+#include<bits/stdc++.h> 
+using namespace std; 
+
+struct Node 
+{ 
+	struct Node *left, *right; 
+	int info; 
+
+	// True if left pointer points to predecessor 
+	// in Inorder Traversal 
+	bool lthread; 
+
+	// True if right pointer points to predecessor 
+	// in Inorder Traversal 
+	bool rthread; 
+}; 
+
+// Insert a Node in Binary Threaded Tree 
+struct Node *insert(struct Node *root, int ikey) 
+{ 
+	// Searching for a Node with given value 
+	Node *ptr = root; 
+	Node *par = NULL; // Parent of key to be inserted 
+	while (ptr != NULL) 
+	{ 
+		// If key already exists, return 
+		if (ikey == (ptr->info)) 
+		{ 
+			printf("Duplicate Key !\n"); 
+			return root; 
+		} 
+
+		par = ptr; // Update parent pointer 
+
+		// Moving on left subtree. 
+		if (ikey < ptr->info) 
+		{ 
+			if (ptr -> lthread == false) 
+				ptr = ptr -> left; 
+			else
+				break; 
+		} 
+
+		// Moving on right subtree. 
+		else
+		{ 
+			if (ptr->rthread == false) 
+				ptr = ptr -> right; 
+			else
+				break; 
+		} 
+	} 
+
+	// Create a new node 
+	Node *tmp = new Node; 
+	tmp -> info = ikey; 
+	tmp -> lthread = true; 
+	tmp -> rthread = true; 
+
+	if (par == NULL) 
+	{ 
+		root = tmp; 
+		tmp -> left = NULL; 
+		tmp -> right = NULL; 
+	} 
+	else if (ikey < (par -> info)) 
+	{ 
+		tmp -> left = par -> left; 
+		tmp -> right = par; 
+		par -> lthread = false; 
+		par -> left = tmp; 
+	} 
+	else
+	{ 
+		tmp -> left = par; 
+		tmp -> right = par -> right; 
+		par -> rthread = false; 
+		par -> right = tmp; 
+	} 
+
+	return root; 
+} 
+
+// Returns inorder successor using rthread 
+struct Node *inorderSuccessor(struct Node *ptr) 
+{ 
+	// If rthread is set, we can quickly find 
+	if (ptr -> rthread == true) 
+		return ptr->right; 
+
+	// Else return leftmost child of right subtree 
+	ptr = ptr -> right; 
+	while (ptr -> lthread == false) 
+		ptr = ptr -> left; 
+	return ptr; 
+} 
+
+// Printing the threaded tree 
+void inorder(struct Node *root) 
+{ 
+	if (root == NULL) 
+		printf("Tree is empty"); 
+
+	// Reach leftmost node 
+	struct Node *ptr = root; 
+	while (ptr -> lthread == false) 
+		ptr = ptr -> left; 
+
+	// One by one print successors 
+	while (ptr != NULL) 
+	{ 
+		printf("%d ",ptr -> info); 
+		ptr = inorderSuccessor(ptr); 
+	} 
+} 
+
+// Driver Program 
+int main() 
+{ 
+	struct Node *root = NULL; 
+
+	root = insert(root, 20); 
+	root = insert(root, 10); 
+	root = insert(root, 30); 
+	root = insert(root, 5); 
+	root = insert(root, 16); 
+	root = insert(root, 14); 
+	root = insert(root, 17); 
+	root = insert(root, 13); 
+
+	inorder(root); 
+
+	return 0; 
+} 
+// Java program Insertion in Threaded Binary Search Tree. 
+import java.util.*; 
+class solution 
+{ 
+static class Node 
+{ 
+	Node left, right; 
+	int info; 
+	
+	// True if left pointer points to predecessor 
+	// in Inorder Traversal 
+	boolean lthread; 
+	
+	// True if right pointer points to predecessor 
+	// in Inorder Traversal 
+	boolean rthread; 
+}; 
+	
+// Insert a Node in Binary Threaded Tree 
+static Node insert( Node root, int ikey) 
+{ 
+	// Searching for a Node with given value 
+	Node ptr = root; 
+	Node par = null; // Parent of key to be inserted 
+	while (ptr != null) 
+	{ 
+		// If key already exists, return 
+		if (ikey == (ptr.info)) 
+		{ 
+			System.out.printf("Duplicate Key !\n"); 
+			return root; 
+		} 
+	
+		par = ptr; // Update parent pointer 
+	
+		// Moving on left subtree. 
+		if (ikey < ptr.info) 
+		{ 
+			if (ptr . lthread == false) 
+				ptr = ptr . left; 
+			else
+				break; 
+		} 
+	
+		// Moving on right subtree. 
+		else
+		{ 
+			if (ptr.rthread == false) 
+				ptr = ptr . right; 
+			else
+				break; 
+		} 
+	} 
+	
+	// Create a new node 
+	Node tmp = new Node(); 
+	tmp . info = ikey; 
+	tmp . lthread = true; 
+	tmp . rthread = true; 
+	
+	if (par == null) 
+	{ 
+		root = tmp; 
+		tmp . left = null; 
+		tmp . right = null; 
+	} 
+	else if (ikey < (par . info)) 
+	{ 
+		tmp . left = par . left; 
+		tmp . right = par; 
+		par . lthread = false; 
+		par . left = tmp; 
+	} 
+	else
+	{ 
+		tmp . left = par; 
+		tmp . right = par . right; 
+		par . rthread = false; 
+		par . right = tmp; 
+	} 
+	
+	return root; 
+} 
+	
+// Returns inorder successor using rthread 
+static Node inorderSuccessor( Node ptr) 
+{ 
+	// If rthread is set, we can quickly find 
+	if (ptr . rthread == true) 
+		return ptr.right; 
+	
+	// Else return leftmost child of right subtree 
+	ptr = ptr . right; 
+	while (ptr . lthread == false) 
+		ptr = ptr . left; 
+	return ptr; 
+} 
+	
+// Printing the threaded tree 
+static void inorder( Node root) 
+{ 
+	if (root == null) 
+		System.out.printf("Tree is empty"); 
+	
+	// Reach leftmost node 
+	Node ptr = root; 
+	while (ptr . lthread == false) 
+		ptr = ptr . left; 
+	
+	// One by one print successors 
+	while (ptr != null) 
+	{ 
+		System.out.printf("%d ",ptr . info); 
+		ptr = inorderSuccessor(ptr); 
+	} 
+} 
+	
+// Driver Program 
+public static void main(String[] args) 
+{ 
+	Node root = null; 
+	
+	root = insert(root, 20); 
+	root = insert(root, 10); 
+	root = insert(root, 30); 
+	root = insert(root, 5); 
+	root = insert(root, 16); 
+	root = insert(root, 14); 
+	root = insert(root, 17); 
+	root = insert(root, 13); 
+	
+	inorder(root); 
+} 
+} 
+//contributed by Arnab Kundu 
+# Insertion in Threaded Binary Search Tree. 
+class newNode: 
+	def __init__(self, key): 
+	
+		# True if left pointer points to 
+		# predecessor in Inorder Traversal 
+		self.info = key 
+		self.left = None
+		self.right =None
+		self.lthread = True
+	
+		# True if right pointer points to 
+		# predecessor in Inorder Traversal 
+		self.rthread = True
+
+# Insert a Node in Binary Threaded Tree 
+def insert(root, ikey): 
+	
+	# Searching for a Node with given value 
+	ptr = root 
+	par = None # Parent of key to be inserted 
+	while ptr != None: 
+		
+		# If key already exists, return 
+		if ikey == (ptr.info): 
+			print("Duplicate Key !") 
+			return root 
+
+		par = ptr # Update parent pointer 
+
+		# Moving on left subtree. 
+		if ikey < ptr.info: 
+			if ptr.lthread == False: 
+				ptr = ptr.left 
+			else: 
+				break
+
+		# Moving on right subtree. 
+		else: 
+			if ptr.rthread == False: 
+				ptr = ptr.right 
+			else: 
+				break
+
+	# Create a new node 
+	tmp = newNode(ikey) 
+
+	if par == None: 
+		root = tmp 
+		tmp.left = None
+		tmp.right = None
+	elif ikey < (par.info): 
+		tmp.left = par.left 
+		tmp.right = par 
+		par.lthread = False
+		par.left = tmp 
+	else: 
+		tmp.left = par 
+		tmp.right = par.right 
+		par.rthread = False
+		par.right = tmp 
+
+	return root 
+
+# Returns inorder successor using rthread 
+def inorderSuccessor(ptr): 
+	
+	# If rthread is set, we can quickly find 
+	if ptr.rthread == True: 
+		return ptr.right 
+
+	# Else return leftmost child of 
+	# right subtree 
+	ptr = ptr.right 
+	while ptr.lthread == False: 
+		ptr = ptr.left 
+	return ptr 
+
+# Printing the threaded tree 
+def inorder(root): 
+	if root == None: 
+		print("Tree is empty") 
+
+	# Reach leftmost node 
+	ptr = root 
+	while ptr.lthread == False: 
+		ptr = ptr.left 
+
+	# One by one print successors 
+	while ptr != None: 
+		print(ptr.info,end=" ") 
+		ptr = inorderSuccessor(ptr) 
+
+# Driver Code 
+if __name__ == '__main__': 
+	root = None
+
+	root = insert(root, 20) 
+	root = insert(root, 10) 
+	root = insert(root, 30) 
+	root = insert(root, 5) 
+	root = insert(root, 16) 
+	root = insert(root, 14) 
+	root = insert(root, 17) 
+	root = insert(root, 13) 
+
+	inorder(root) 
+	
+# This code is contributed by PranchalK 
+using System; 
+
+// C# program Insertion in Threaded Binary Search Tree. 
+public class solution 
+{ 
+public class Node 
+{ 
+	public Node left, right; 
+	public int info; 
+
+	// True if left pointer points to predecessor 
+	// in Inorder Traversal 
+	public bool lthread; 
+
+	// True if right pointer points to predecessor 
+	// in Inorder Traversal 
+	public bool rthread; 
+} 
+
+// Insert a Node in Binary Threaded Tree 
+public static Node insert(Node root, int ikey) 
+{ 
+	// Searching for a Node with given value 
+	Node ptr = root; 
+	Node par = null; // Parent of key to be inserted 
+	while (ptr != null) 
+	{ 
+		// If key already exists, return 
+		if (ikey == (ptr.info)) 
+		{ 
+			Console.Write("Duplicate Key !\n"); 
+			return root; 
+		} 
+
+		par = ptr; // Update parent pointer 
+
+		// Moving on left subtree. 
+		if (ikey < ptr.info) 
+		{ 
+			if (ptr.lthread == false) 
+			{ 
+				ptr = ptr.left; 
+			} 
+			else
+			{ 
+				break; 
+			} 
+		} 
+
+		// Moving on right subtree. 
+		else
+		{ 
+			if (ptr.rthread == false) 
+			{ 
+				ptr = ptr.right; 
+			} 
+			else
+			{ 
+				break; 
+			} 
+		} 
+	} 
+
+	// Create a new node 
+	Node tmp = new Node(); 
+	tmp.info = ikey; 
+	tmp.lthread = true; 
+	tmp.rthread = true; 
+
+	if (par == null) 
+	{ 
+		root = tmp; 
+		tmp.left = null; 
+		tmp.right = null; 
+	} 
+	else if (ikey < (par.info)) 
+	{ 
+		tmp.left = par.left; 
+		tmp.right = par; 
+		par.lthread = false; 
+		par.left = tmp; 
+	} 
+	else
+	{ 
+		tmp.left = par; 
+		tmp.right = par.right; 
+		par.rthread = false; 
+		par.right = tmp; 
+	} 
+
+	return root; 
+} 
+
+// Returns inorder successor using rthread 
+public static Node inorderSuccessor(Node ptr) 
+{ 
+	// If rthread is set, we can quickly find 
+	if (ptr.rthread == true) 
+	{ 
+		return ptr.right; 
+	} 
+
+	// Else return leftmost child of right subtree 
+	ptr = ptr.right; 
+	while (ptr.lthread == false) 
+	{ 
+		ptr = ptr.left; 
+	} 
+	return ptr; 
+} 
+
+// Printing the threaded tree 
+public static void inorder(Node root) 
+{ 
+	if (root == null) 
+	{ 
+		Console.Write("Tree is empty"); 
+	} 
+
+	// Reach leftmost node 
+	Node ptr = root; 
+	while (ptr.lthread == false) 
+	{ 
+		ptr = ptr.left; 
+	} 
+
+	// One by one print successors 
+	while (ptr != null) 
+	{ 
+		Console.Write("{0:D} ",ptr.info); 
+		ptr = inorderSuccessor(ptr); 
+	} 
+} 
+
+// Driver Program 
+public static void Main(string[] args) 
+{ 
+	Node root = null; 
+
+	root = insert(root, 20); 
+	root = insert(root, 10); 
+	root = insert(root, 30); 
+	root = insert(root, 5); 
+	root = insert(root, 16); 
+	root = insert(root, 14); 
+	root = insert(root, 17); 
+	root = insert(root, 13); 
+
+	inorder(root); 
+} 
+} 
+
+// This code is contributed by Shrikant13 
+
+
+//Function to calculate average time 
+void findavgTime(Process proc[], int n) 
+{ 
+	int wt[n], tat[n], total_wt = 0, total_tat = 0; 
+
+	//Function to find waiting time of all processes 
+	findWaitingTime(proc, n, wt); 
+
+	//Function to find turn around time for all processes 
+	findTurnAroundTime(proc, n, wt, tat); 
+
+	//Display processes along with all details 
+	cout << "\nProcesses "<< " Burst time "
+		<< " Waiting time " << " Turn around time\n"; 
+
+	// Calculate total waiting time and total turn 
+	// around time 
+	for (int i=0; i<n; i++) 
+	{ 
+		total_wt = total_wt + wt[i]; 
+		total_tat = total_tat + tat[i]; 
+		cout << " " << proc[i].pid << "\t\t"
+			<< proc[i].bt << "\t " << wt[i] 
+			<< "\t\t " << tat[i] <<endl; 
+	} 
+
+	cout << "\nAverage waiting time = "
+		<< (float)total_wt / (float)n; 
+	cout << "\nAverage turn around time = "
+		<< (float)total_tat / (float)n; 
+} 
+
+void priorityScheduling(Process proc[], int n) 
+{ 
+	// Sort processes by priority 
+	sort(proc, proc + n, comparison); 
+
+	cout<< "Order in which processes gets executed \n"; 
+	for (int i = 0 ; i < n; i++) 
+		cout << proc[i].pid <<" " ; 
+
+	findavgTime(proc, n); 
+} 
+
+// Driver code 
+int main() 
+{ 
+	Process proc[] = {{1, 10, 2}, {2, 5, 0}, {3, 8, 1}}; 
+	int n = sizeof proc / sizeof proc[0]; 
+	priorityScheduling(proc, n); 
+	return 0; 
+} 
+echo " "
+echo "----Implementing Directory Management----"
+echo " "
+ch=0 
+while [ $ch -lt 6 ] 
+do
+	echo "Press the following to :"
+	echo "1) Create a new directory."
+	echo "2) Modify a directory."
+	echo "3) Navigate into directory."
+	echo "4) Listing directories."
+	echo "5) Exit."
+	read ch 
+
+	case $ch in
+	1) echo " "
+	echo "---Creation of Directory---"
+	echo " "
+	echo "Enter the name of the directory:"
+	read name 
+	mkdir $name 
+	;; 
+	2) echo " "
+	echo "---Modification of Directory---"
+	echo " "
+	echo "Enter the directory to be modified:"
+	read orgdir 
+	echo "Press the following to :"
+	echo " "
+	echo "1) Rename directory."
+	echo "2) Copy directory to another."
+	echo "3) Move directory."
+	echo "4) Delete directory."
+	echo "5) Exit from Modify Mode."
+	read modch 
+
+		case $modch in
+		1) echo " "
+		echo "---Rename a directory---"
+		echo " "
+		echo "Enter new name for the directory:"
+		read newname 
+		mv $orgdir $newname 
+		;; 
+		2) echo " "
+		echo "---Copying a directory to another---"
+		echo " "
+		echo "Enter target directory:"
+		read target 
+		mkdir $target 
+		cp $orgdir $target 
+		;; 
+		3) echo " "
+		echo "---Moving a directory---"
+		echo " "
+		echo "Enter target directory:"
+		read target 
+		mkdir $target 
+		mv $orgdir $target 
+		;; 
+		4) echo " "
+		echo "---Deleting a directory---"
+		echo " "
+		rmdir $orgdir 
+		;; 
+		5) echo " "
+		echo "---Exiting from modify mode---"
+		echo " "
+		exit
+		;; 
+		esac
+	;; 
+	3) 
+	echo "---Navigation of Directory---"
+	echo " "
+	echo "Enter your choice for method of navigation :"
+	echo "1) Go to Parent Directory. "
+	echo "2) Navigate to specific directory."
+	echo "3) Exit from Navigate Mode."
+	read navch 
+		
+	case $navch in
+		1) echo " "
+		echo "---Parent Directory---"
+		echo " "
+		cd .. 
+		pwd
+		;; 
+		2) echo " "
+		echo "---Navigation to Specific Directory---"
+		echo " "
+		echo "Enter the target Path:"
+		read path 
+		cd $path 
+		pwd
+		;; 
+		3) echo " "
+		echo "---Exiting from Navigate Mode---"
+		echo " "
+		exit
+		;; 
+		esac
+	;; 
+	4) 
+	echo "--- Listing of Directories---"
+	echo " "
+	echo "Enter your choice for method of listing :"
+	echo "1) List of directories. "
+	echo "2) List of directories and their details."
+	echo "3) Exit from List Mode."
+	read lisch 
+		
+	case $lisch in
+		1) echo " "
+		echo "---List of directories---"
+		echo " "
+		ls
+		;; 
+		2) echo " "
+		echo "---Detailed List of directories---"
+		echo " "
+		ls -l 
+		;; 
+		3) echo " "
+		echo "---Exiting from List Mode---"
+		echo " "
+		exit
+		;; 
+		esac
+	;; 
+	5)echo " "
+	echo "---Exiting---"
+	echo " "
+	exit
+	;; 
+	esac
+done
